@@ -25,9 +25,8 @@ const getAll = async () => {
   return users;
 };
 
-// const getUserById(id) {
-//   const users = await user.getAll();
-//   return users.find(u => u.id === id);
-// }
+const getUserById = async id => {
+  return users.find(u => u.id === id);
+};
 
-module.exports = { getAll };
+module.exports = { getAll, getUserById };
