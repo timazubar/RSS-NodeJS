@@ -1,4 +1,4 @@
-// const User = require('./user.model');
+const User = require('./user.model');
 
 const users = [
   {
@@ -29,4 +29,28 @@ const getUserById = async id => {
   return users.find(u => u.id === id);
 };
 
-module.exports = { getAll, getUserById };
+const createUser = async params => {
+  const { name, login, password } = params;
+  const newUser = new User({ name, login, password });
+  users.push(newUser);
+  return newUser;
+};
+
+const updateUser = async (id, newParams) => {
+  const user = users.find(u => u.id === id);
+  Object.assign(user, newParams);
+  return user;
+};
+
+const deleteUser = async id => {
+  const index = users.findIndex(u => u.id === id);
+
+  if (index !== -1) {
+    users.splice(index, 1);
+    return true;
+  }
+
+  return false;
+};
+
+module.exports = { getAll, getUserById, createUser, updateUser, deleteUser };
