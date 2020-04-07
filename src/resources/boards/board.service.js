@@ -12,9 +12,9 @@ const createBoard = params => boardsRepo.createBoard(params);
 
 const updateBoard = (id, newParams) => boardsRepo.updateBoard(id, newParams);
 
-const deleteBoard = async id => {
+const deleteBoard = id => {
   boardsRepo.deleteBoard(id);
-  const tasks = (await tasksRepo.getAll()).filter(task => task.boardId === id);
+  const tasks = tasksRepo.getAll().filter(task => task.boardId === id);
 
   for (let i = 0; i < tasks.length; i++) {
     const { id: taskId, boardId } = tasks[i];

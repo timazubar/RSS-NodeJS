@@ -3,9 +3,9 @@ const boardsService = require('./board.service');
 const Board = require('./board.model');
 
 router.route('/').get((req, res) => {
-  const boards = boardsService.getAll();
+  const tasks = boardsService.getAll();
 
-  res.json(boards);
+  res.json(tasks);
 });
 
 router.route('/:boardId').get((req, res) => {
@@ -23,7 +23,7 @@ router.route('/').post((req, res) => {
   const { title, columns } = req.body;
   if (!title || !columns) {
     res.status(400);
-    res.end({ message: 'Error! Request cannot be handled.' });
+    res.send({ message: 'Error! Request cannot be handled.' });
   } else {
     const newBoard = new Board({ title, columns });
     boardsService.createBoard(newBoard);

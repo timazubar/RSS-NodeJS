@@ -1,5 +1,3 @@
-// const Task = require('./task.model');
-
 const tasks = [
   {
     id: '1',
@@ -48,30 +46,15 @@ const tasks = [
   }
 ];
 
-const getAll = async () => {
+const getAll = () => {
   return tasks;
 };
 
-// const getTaskById = async params => {
-//   return tasks.find(t => t.id === params.id);
-// };
-
-const createTask = async task => {
-  // const { title, order, description, userId, columnId } = details;
-  // const boardId = params.boardId;
-
-  // const newTask = new Task({
-  //   title,
-  //   order,
-  //   description,
-  //   userId,
-  //   boardId,
-  //   columnId
-  // });
+const createTask = task => {
   tasks.push(task);
 };
 
-const updateTask = async (taskId, boardId, params) => {
+const updateTask = (taskId, boardId, params) => {
   const taskIndex = tasks.findIndex(
     task => task.id === taskId && task.boardId === boardId
   );
@@ -80,7 +63,7 @@ const updateTask = async (taskId, boardId, params) => {
   }
 };
 
-const deleteTask = async (taskId, boardId) => {
+const deleteTask = (taskId, boardId) => {
   const taskIndex = tasks.findIndex(
     task => task.id === taskId && task.boardId === boardId
   );

@@ -23,10 +23,6 @@ const getAll = () => {
   return users;
 };
 
-// const getUserById = id => {
-//   return users.find(u => u.id === id);
-// };
-
 const createUser = user => {
   users.push(user);
 };

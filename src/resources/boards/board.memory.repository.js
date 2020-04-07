@@ -53,10 +53,6 @@ const getAll = () => {
   return boards;
 };
 
-// const getBoardById = id => {
-//   return boards.find(board => board.id === id);
-// };
-
 const createBoard = board => {
   boards.push(board);
 };
@@ -79,7 +75,6 @@ const deleteBoard = id => {
 
 module.exports = {
   getAll,
-  // getBoardById,
   createBoard,
   updateBoard,
   deleteBoard

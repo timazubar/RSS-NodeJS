@@ -3,11 +3,11 @@ const tasksService = require('./task.service');
 const Task = require('./task.model');
 
 router.route('/boards/:boardId/tasks').get(async (req, res) => {
-  const tasks = await tasksService.getAll(req.params.boardId);
+  const tasks = tasksService.getAll(req.params.boardId);
   res.json(tasks.map(Task.toResponse));
 });
 
-router.route('/boards/:boardId/tasks/:taskId').get(async (req, res) => {
+router.route('/boards/:boardId/tasks/:taskId').get((req, res) => {
   const task = tasksService.getTaskById(req.params.boardId, req.params.taskId);
   if (task) {
     res.json(task);
@@ -17,14 +17,14 @@ router.route('/boards/:boardId/tasks/:taskId').get(async (req, res) => {
   }
 });
 
-router.route('/boards/:boardId/tasks').post(async (req, res) => {
+router.route('/boards/:boardId/tasks').post((req, res) => {
   const boardId = req.params.boardId;
   const data = req.body;
   const task = tasksService.createTask(boardId, data);
   res.json(Task.toResponse(task));
 });
 
-router.route('/boards/:boardId/tasks/:taskId').put(async (req, res) => {
+router.route('/boards/:boardId/tasks/:taskId').put((req, res) => {
   const task = tasksService.getTaskById(req.params.boardId, req.params.taskId);
   if (!task) {
     res.status(404);
@@ -36,7 +36,7 @@ router.route('/boards/:boardId/tasks/:taskId').put(async (req, res) => {
   }
 });
 
-router.route('/boards/:boardId/tasks/:taskId').delete(async (req, res) => {
+router.route('/boards/:boardId/tasks/:taskId').delete((req, res) => {
   const task = tasksService.getTaskById(req.params.boardId, req.params.taskId);
   if (!task) {
     res.status(404);
