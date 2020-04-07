@@ -22,7 +22,7 @@ router.route('/:boardId').get((req, res) => {
 router.route('/').post((req, res) => {
   const { title, columns } = req.body;
   if (!title || !columns) {
-    res.status(401);
+    res.status(400);
     res.end({ message: 'Error! Request cannot be handled.' });
   } else {
     const newBoard = new Board({ title, columns });
