@@ -1,5 +1,3 @@
-const Board = require('./board.model');
-
 const boards = [
   {
     id: '1',
@@ -51,51 +49,37 @@ const boards = [
   }
 ];
 
-const getAll = async () => {
+const getAll = () => {
   return boards;
 };
 
-const getBoardById = async id => {
-  return boards.find(b => b.id === id);
+// const getBoardById = id => {
+//   return boards.find(board => board.id === id);
+// };
+
+const createBoard = board => {
+  boards.push(board);
 };
 
-const createBoard = async params => {
-  const { title, columns } = params;
-  const newBoard = new Board({ title, columns });
-  boards.push(newBoard);
-  return newBoard;
-};
+const updateBoard = (id, newParams) => {
+  const index = boards.map(board => board.id).indexOf(id);
 
-const updateBoard = async (id, newParams) => {
-  const board = boards.find(b => b.id === id);
-
-  for (const column of board.columns) {
-    for (const newColumn of newParams.columns) {
-      if (column.id === newColumn.id) {
-        Object.assign(board, newParams);
-
-        return board;
-      }
-
-      return false;
-    }
+  if (index !== -1) {
+    boards[index] = { ...boards[index], ...newParams };
   }
 };
 
-const deleteBoard = async id => {
-  const index = boards.findIndex(b => b.id === id);
+const deleteBoard = id => {
+  const index = boards.map(board => board.id).indexOf(id);
 
   if (index !== -1) {
     boards.splice(index, 1);
-    return true;
   }
-
-  return false;
 };
 
 module.exports = {
   getAll,
-  getBoardById,
+  // getBoardById,
   createBoard,
   updateBoard,
   deleteBoard

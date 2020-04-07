@@ -1,49 +1,51 @@
 const router = require('express').Router();
 const boardsService = require('./board.service');
+const Board = require('./board.model');
 
-router.route('/').get(async (req, res) => {
-  const users = await boardsService.getAll();
+router.route('/').get((req, res) => {
+  const boards = boardsService.getAll();
 
-  if (users.length) {
-    res.json(users);
-  } else {
-    res.status(404).end();
-  }
+  res.json(boards);
 });
 
-router.route('/:boardId').get(async (req, res) => {
-  const board = await boardsService.getBoardById(req.params.id);
+router.route('/:boardId').get((req, res) => {
+  const board = boardsService.getBoardById(req.params.boardId);
 
   if (board) {
     res.json(board);
   } else {
-    res.status(404).end();
+    res.status(404);
+    res.send({ message: 'Error! The board is not found.' });
   }
 });
 
-router.route('/').post(async (req, res) => {
-  const newBoard = await boardsService.createBoard(req.body);
-
-  res.json(newBoard);
-});
-
-router.route('/:boardId').put(async (req, res) => {
-  const updatedBoard = await boardsService.updateBoard(req.params.id, req.body);
-
-  if (updatedBoard) {
-    res.json(updatedBoard);
+router.route('/').post((req, res) => {
+  const { title, columns } = req.body;
+  if (!title || !columns) {
+    res.status(401);
+    res.end({ message: 'Error! Request cannot be handled.' });
   } else {
-    res.status(404).send('Error!');
+    const newBoard = new Board({ title, columns });
+    boardsService.createBoard(newBoard);
+
+    res.json(newBoard);
   }
 });
 
-router.route('/:boardId').delete(async (req, res) => {
-  const deletedBoard = await boardsService.deleteBoard(req.params.id);
+router.route('/:boardId').put((req, res) => {
+  boardsService.updateBoard(req.params.boardId, req.body);
+  res.send({ message: 'Success! The board has been updated.' });
+});
 
-  if (deletedBoard) {
-    res.status(204).end();
+router.route('/:boardId').delete((req, res) => {
+  const board = boardsService.getBoardById(req.params.boardId);
+  if (!board) {
+    res.status(404);
+    res.send({ message: 'Error! The board is not found' });
   } else {
-    res.status(404).end();
+    boardsService.deleteBoard(req.params.boardId);
+    res.status(200);
+    res.send({ message: 'Success! The board has been deleted.' });
   }
 });
 
