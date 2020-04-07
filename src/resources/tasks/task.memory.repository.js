@@ -1,4 +1,4 @@
-const Task = require('./task.model');
+// const Task = require('./task.model');
 
 const tasks = [
   {
@@ -52,60 +52,46 @@ const getAll = async () => {
   return tasks;
 };
 
-const getTaskById = async params => {
-  return tasks.find(t => t.id === params.id);
+// const getTaskById = async params => {
+//   return tasks.find(t => t.id === params.id);
+// };
+
+const createTask = async task => {
+  // const { title, order, description, userId, columnId } = details;
+  // const boardId = params.boardId;
+
+  // const newTask = new Task({
+  //   title,
+  //   order,
+  //   description,
+  //   userId,
+  //   boardId,
+  //   columnId
+  // });
+  tasks.push(task);
 };
 
-const getTasksByBoard = async params => {
-  return tasks.filter(t => t.boardId === (params.boardId || params));
-};
-
-const createTask = async (params, details) => {
-  const { title, order, description, userId, columnId } = details;
-  const boardId = params.boardId;
-
-  const newTask = new Task({
-    title,
-    order,
-    description,
-    userId,
-    boardId,
-    columnId
-  });
-
-  tasks.push(newTask);
-
-  return newTask;
-};
-
-const updateTask = async (params, newParams) => {
-  const task = tasks.find(t => t.id === params.id);
-
-  if (task) {
-    Object.assign(task, newParams);
-
-    return task;
+const updateTask = async (taskId, boardId, params) => {
+  const taskIndex = tasks.findIndex(
+    task => task.id === taskId && task.boardId === boardId
+  );
+  if (taskIndex !== -1) {
+    tasks[taskIndex] = { ...tasks[taskIndex], ...params };
   }
-
-  return false;
 };
 
-const deleteTask = async params => {
-  const index = tasks.findIndex(t => t.id === params.id);
+const deleteTask = async (taskId, boardId) => {
+  const taskIndex = tasks.findIndex(
+    task => task.id === taskId && task.boardId === boardId
+  );
 
-  if (index !== -1) {
-    tasks.splice(index, 1);
-
-    return true;
+  if (taskIndex !== -1) {
+    tasks.splice(taskIndex, 1);
   }
-
-  return false;
 };
 
 module.exports = {
   getAll,
-  getTaskById,
-  getTasksByBoard,
   createTask,
   updateTask,
   deleteTask

@@ -40,7 +40,7 @@ const boards = [
       {
         id: '31',
         title: 'Column1',
-        order: 5
+        order: 1
       },
       {
         id: '32',

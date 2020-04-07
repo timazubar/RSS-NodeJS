@@ -1,49 +1,50 @@
-const router = require('express').Router({ mergeParams: true });
+const router = require('express').Router();
 const tasksService = require('./task.service');
+const Task = require('./task.model');
 
-router.route('/').get(async (req, res) => {
-  const tasks = await tasksService.getTaskByBoard(req.params);
+router.route('/boards/:boardId/tasks').get(async (req, res) => {
+  const tasks = await tasksService.getAll(req.params.boardId);
+  res.json(tasks.map(Task.toResponse));
+});
 
-  if (tasks.length) {
-    res.json(tasks);
+router.route('/boards/:boardId/tasks/:taskId').get(async (req, res) => {
+  const task = tasksService.getTaskById(req.params.boardId, req.params.taskId);
+  if (task) {
+    res.json(task);
   } else {
-    res.status(401).end();
+    res.status(404);
+    res.send({ message: 'Error! Task is not found.' });
   }
 });
 
-router.route('/:id').get(async (req, res) => {
-  const getTaskById = await tasksService.getTaskById(req.params);
+router.route('/boards/:boardId/tasks').post(async (req, res) => {
+  const boardId = req.params.boardId;
+  const data = req.body;
+  const task = tasksService.createTask(boardId, data);
+  res.json(Task.toResponse(task));
+});
 
-  if (getTaskById) {
-    res.json(getTaskById);
+router.route('/boards/:boardId/tasks/:taskId').put(async (req, res) => {
+  const task = tasksService.getTaskById(req.params.boardId, req.params.taskId);
+  if (!task) {
+    res.status(404);
+    res.send({ message: 'Error! The task is not found.' });
   } else {
-    res.status(404).end();
+    tasksService.updateTask(req.params.taskId, req.params.boardId, req.body);
+    res.status(200);
+    res.send({ message: 'Success! The task has been updated.' });
   }
 });
 
-router.route('/').post(async (req, res) => {
-  const newTask = await tasksService.createTask(req.params, req.body);
-
-  res.json(newTask);
-});
-
-router.route('/:id').put(async (req, res) => {
-  const updatedTask = await tasksService.updateTask(req.params, req.body);
-
-  if (updatedTask) {
-    res.json(updatedTask);
+router.route('/boards/:boardId/tasks/:taskId').delete(async (req, res) => {
+  const task = tasksService.getTaskById(req.params.boardId, req.params.taskId);
+  if (!task) {
+    res.status(404);
+    res.send({ message: 'Error! The task is not found' });
   } else {
-    res.status(404).end();
-  }
-});
-
-router.route('/:id').delete(async (req, res) => {
-  const deletedTask = await tasksService.deleteTask(req.params);
-
-  if (deletedTask) {
-    res.status(204).end();
-  } else {
-    res.status(404).end();
+    tasksService.deleteTask(req.params.boardId, req.params.taskId, req.body);
+    res.status(200);
+    res.send({ message: 'Success! The task has been deleted.' });
   }
 });
 
