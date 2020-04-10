@@ -16,7 +16,7 @@ const getTaskById = (boardId, taskId) => {
 const createTask = (boardId, params) => {
   const board = boardsService.getBoardById(boardId);
   if (board) {
-    const task = new Task(...params, boardId);
+    const task = new Task({ ...params, boardId });
     tasksRepo.createTask(task);
     return task;
   }
@@ -26,8 +26,8 @@ const updateTask = (taskId, boardId, params) => {
   tasksRepo.updateTask(taskId, boardId, params);
 };
 
-const deleteTask = (taskId, boardId) => {
-  tasksRepo.deleteTask(taskId, boardId);
+const deleteTask = (boardId, taskId) => {
+  tasksRepo.deleteTask(boardId, taskId);
 };
 
 module.exports = {

@@ -42,7 +42,7 @@ router.route('/boards/:boardId/tasks/:taskId').delete((req, res) => {
     res.status(404);
     res.send({ message: 'Error! The task is not found' });
   } else {
-    tasksService.deleteTask(req.params.boardId, req.params.taskId, req.body);
+    tasksService.deleteTask(req.params.taskId, req.params.boardId);
     res.status(200);
     res.send({ message: 'Success! The task has been deleted.' });
   }
