@@ -1,3 +1,4 @@
+const { connectDB } = require('./resources/db/db.client');
 const { PORT } = require('./common/config');
 const app = require('./app');
 
@@ -13,6 +14,8 @@ process.on('uncaughtException', err => {
   process.exit(500);
 });
 
-app.listen(PORT, () =>
-  console.log(`App is running on http://localhost:${PORT}`)
-);
+connectDB(() => {
+  app.listen(PORT, () =>
+    console.log(`App is running on http://localhost:${PORT}`)
+  );
+});
