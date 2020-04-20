@@ -1,53 +1,52 @@
 const router = require('express').Router();
 const boardsService = require('./board.service');
 const Board = require('./board.model');
+const ErrorHandler = require('../../common/errorHandler');
 
-router.route('/').get((req, res, next) => {
+router.route('/').get(async (req, res, next) => {
   try {
-    const tasks = boardsService.getAll();
+    const boards = await boardsService.getAll();
     res.status(200);
-    res.json(tasks);
+    res.json(boards);
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/:boardId').get((req, res, next) => {
+router.route('/:boardId').get(async (req, res, next) => {
   try {
-    const board = boardsService.getBoardById(req.params.boardId);
-
+    const board = await boardsService.getBoardById(req.params.boardId);
     if (board) {
       res.status(200);
       res.json(board);
     } else {
-      res.status(404);
-      res.send({ message: 'Error! The board is not found.' });
+      throw new ErrorHandler(404, 'Error! The board is not found.');
     }
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/').post((req, res, next) => {
+router.route('/').post(async (req, res, next) => {
   try {
     const { title, columns } = req.body;
-    if (!title || !columns) {
-      res.status(400);
-      res.send({ message: 'Error! Request cannot be handled.' });
-    } else {
+    if (title && columns) {
       const newBoard = new Board({ title, columns });
-      boardsService.createBoard(newBoard);
+      await boardsService.createBoard(newBoard);
+
       res.status(200);
       res.json(newBoard);
+    } else {
+      throw new ErrorHandler(400, 'Error! Bad request');
     }
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/:boardId').put((req, res, next) => {
+router.route('/:boardId').put(async (req, res, next) => {
   try {
-    boardsService.updateBoard(req.params.boardId, req.body);
+    await boardsService.updateBoard(req.params.boardId, req.body);
     res.status(200);
     res.send({ message: 'Success! The board has been updated.' });
   } catch (err) {
@@ -55,16 +54,15 @@ router.route('/:boardId').put((req, res, next) => {
   }
 });
 
-router.route('/:boardId').delete((req, res, next) => {
+router.route('/:boardId').delete(async (req, res, next) => {
   try {
-    const board = boardsService.getBoardById(req.params.boardId);
-    if (!board) {
-      res.status(404);
-      res.send({ message: 'Error! The board is not found' });
-    } else {
-      boardsService.deleteBoard(req.params.boardId);
+    const board = await boardsService.getBoardById(req.params.boardId);
+    if (board) {
+      await boardsService.deleteBoard(req.params.boardID);
       res.status(200);
-      res.send({ message: 'Success! The board has been deleted.' });
+      res.send({ message: 'The board has been deleted' });
+    } else {
+      throw new ErrorHandler(404, 'Error! Board was not found');
     }
   } catch (err) {
     return next(err);

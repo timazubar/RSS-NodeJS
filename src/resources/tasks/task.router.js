@@ -1,18 +1,18 @@
 const router = require('express').Router();
 const tasksService = require('./task.service');
-const Task = require('./task.model');
+const ErrorHandler = require('../../common/errorHandler');
 
 router.route('/boards/:boardId/tasks').get(async (req, res, next) => {
   try {
     const tasks = tasksService.getAll(req.params.boardId);
     res.status(200);
-    res.json(tasks.map(Task.toResponse));
+    res.json(tasks);
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/boards/:boardId/tasks/:taskId').get((req, res, next) => {
+router.route('/boards/:boardId/tasks/:taskId').get(async (req, res, next) => {
   try {
     const task = tasksService.getTaskById(
       req.params.boardId,
@@ -22,62 +22,65 @@ router.route('/boards/:boardId/tasks/:taskId').get((req, res, next) => {
       res.status(200);
       res.json(task);
     } else {
-      res.status(404);
-      res.send({ message: 'Error! Task is not found.' });
+      throw new ErrorHandler(404, 'Error! The task was not found.');
     }
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/boards/:boardId/tasks').post((req, res, next) => {
+router.route('/boards/:boardId/tasks').post(async (req, res, next) => {
   try {
-    const boardId = req.params.boardId;
-    const data = req.body;
-    const task = tasksService.createTask(boardId, data);
+    const task = await tasksService.createTask(req.params.boardID, req.body);
     res.status(200);
-    res.json(Task.toResponse(task));
+    res.json(task);
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/boards/:boardId/tasks/:taskId').put((req, res, next) => {
+router.route('/boards/:boardId/tasks/:taskId').put(async (req, res, next) => {
   try {
     const task = tasksService.getTaskById(
       req.params.boardId,
       req.params.taskId
     );
-    if (!task) {
-      res.status(404);
-      res.send({ message: 'Error! The task is not found.' });
-    } else {
-      tasksService.updateTask(req.params.taskId, req.params.boardId, req.body);
+    if (task) {
+      await tasksService.updateTask(
+        req.params.taskID,
+        req.params.boardID,
+        req.body
+      );
+
       res.status(200);
-      res.send({ message: 'Success! The task has been updated.' });
+      res.send({ message: 'The task has been updated.' });
+    } else {
+      throw new ErrorHandler(404, 'Task not found');
     }
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/boards/:boardId/tasks/:taskId').delete((req, res, next) => {
-  try {
-    const task = tasksService.getTaskById(
-      req.params.boardId,
-      req.params.taskId
-    );
-    if (!task) {
-      res.status(404);
-      res.send({ message: 'Error! The task is not found' });
-    } else {
-      tasksService.deleteTask(req.params.taskId, req.params.boardId);
-      res.status(200);
-      res.send({ message: 'Success! The task has been deleted.' });
+router
+  .route('/boards/:boardId/tasks/:taskId')
+  .delete(async (req, res, next) => {
+    try {
+      const task = tasksService.getTaskById(
+        req.params.boardId,
+        req.params.taskId
+      );
+      if (task) {
+        await tasksService.deleteTask(req.params.taskID, req.params.boardID);
+
+        res.status(200);
+        res.send({ message: 'The Task has been deleted' });
+      } else {
+        throw new ErrorHandler(404, 'Task not found');
+      }
+    } catch (err) {
+      return next(err);
     }
-  } catch (err) {
-    return next(err);
-  }
-});
+  });
 
 module.exports = router;

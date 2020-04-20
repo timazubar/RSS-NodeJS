@@ -12,9 +12,9 @@ const logger = winston.createLogger({
   format: winston.format.cli()
 });
 
-const requestLogger = (req, res, next) => {
+const requestLogger = async (req, res, next) => {
   const { method, url, params, body } = req;
-  logger.log(
+  await logger.log(
     'info',
     `${method} url: ${url} params: ${JSON.stringify(
       params
@@ -23,14 +23,14 @@ const requestLogger = (req, res, next) => {
   next();
 };
 
-const errorLogger = (err, req, res, next) => {
+const errorLogger = async (err, req, res, next) => {
   const { statusCode, message } = err;
-  res.status(500).send(message);
-  logger.log('error', `CODE 500: ${message}`);
+  await res.status(statusCode).send(message);
+  await logger.log('error', `${statusCode}: ${message}`);
 };
 
-const processLogger = (err, message) => {
-  logger.log('error', `${err}: ${message}`);
+const processLogger = async (err, message) => {
+  await logger.log('error', `${err}: ${message}`);
 };
 
 module.exports = { requestLogger, errorLogger, processLogger };

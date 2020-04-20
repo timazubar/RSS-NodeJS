@@ -10,9 +10,9 @@ const connectDB = cb => {
   db.on('error', console.error.bind(console, 'connection error:'));
   db.once('open', async () => {
     await db.dropDatabase();
-    console.log('DB connected!');
+    console.log('DB is connected!');
     cb();
   });
 };
 
-module.exports = { connectDB };
+module.exports = connectDB;

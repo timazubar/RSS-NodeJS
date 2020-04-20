@@ -1,9 +1,8 @@
-/* eslint-disable no-unused-expressions */
-const { connectDB } = require('./resources/db/db.client');
+const connectDB = require('./resources/db/db.client');
 const { PORT } = require('./common/config');
 const app = require('./app');
-require('dotenv').config;
 const { processLogger } = require('./logger');
+require('dotenv').config();
 
 process.on('unhandledRejection', err => {
   processLogger('unhandledRejection', err.message);
