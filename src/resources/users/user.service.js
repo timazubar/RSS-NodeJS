@@ -1,26 +1,33 @@
-const usersRepo = require('./user.memory.repository');
-const tasksRepo = require('../users/user.db.repository');
-const tasksService = require('../tasks/task.service');
+const usersRepo = require('./user.db.repository');
+const tasksRepo = require('../tasks/task.db.repository');
+const User = require('./user.model');
 
-const getAll = () => usersRepo.getAll();
+const getAll = async () => await usersRepo.getAll();
 
-const getUserById = id => {
-  const users = usersRepo.getAll();
-  return users.find(user => user.id === id);
+const getUserById = async id => {
+  const users = await usersRepo.getAll();
+  const res = users.find(user => user.id === id);
+  if (res) {
+    return User.toResponse(res);
+  }
 };
 
-const createUser = params => usersRepo.createUser(params);
+const createUser = async user => {
+  return User.toResponse(await usersRepo.createUser(user));
+};
 
-const updateUser = (id, newParams) => usersRepo.updateUser(id, newParams);
+const updateUser = async (id, newParams) => {
+  await usersRepo.updateUser(id, newParams);
+};
 
-const deleteUser = id => {
-  usersRepo.deleteUser(id);
-  const tasks = tasksRepo.getAll().filter(task => task.userId === id);
+const deleteUser = async id => {
+  await usersRepo.deleteUser(id);
+  const tasks = (await tasksRepo.getAll()).filter(task => task.userId === id);
 
-  for (let i = 0; i < tasks.length; i++) {
-    const { id: taskId, boardId } = tasks[i];
-    tasksService.updateTask(taskId, boardId, { ...tasks[i], userId: null });
-  }
+  tasks.forEach(async task => {
+    const { id: taskId, boardId } = task;
+    await tasksRepo.updateTask(taskId, boardId, { ...tasks, userId: null });
+  });
 };
 
 module.exports = { getAll, getUserById, createUser, updateUser, deleteUser };

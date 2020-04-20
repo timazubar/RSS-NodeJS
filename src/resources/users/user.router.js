@@ -1,70 +1,61 @@
 const router = require('express').Router();
-const User = require('./user.model');
+const ErrorHandler = require('../../common/errorHandler');
 const usersService = require('./user.service');
 
-router.route('/').get((req, res, next) => {
+router.route('/').get(async (req, res, next) => {
   try {
-    const users = usersService.getAll();
+    const users = await usersService.getAll();
     res.status(200);
-    res.json(users.map(User.toResponse));
+    res.json(users);
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/:userId').get((req, res, next) => {
+router.route('/:userId').get(async (req, res, next) => {
   try {
-    const user = usersService.getUserById(req.params.userId);
-    if (!user) {
-      res.status(404);
-      res.send({ message: 'Error! The user is not found' });
-    } else {
+    const user = await usersService.getUserById(req.params.userId);
+    if (user) {
       res.status(200);
       res.json(user);
+    } else {
+      throw new ErrorHandler(404, 'Error! User not found');
     }
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/').post((req, res, next) => {
+router.route('/').post(async (req, res, next) => {
   try {
     const { name, login, password } = req.body;
-    if (!name || !login || !password) {
-      res.status(400);
-      res.end({ message: 'Error! Request cannot be handled.' });
-    } else {
-      const user = new User({ name, login, password });
-      usersService.createUser(user);
+    if (name && login && password) {
+      const user = await usersService.createUser({ name, login, password });
       res.status(200);
-      res.json(User.toResponse(user));
+      res.json(user);
+    } else {
+      throw new ErrorHandler(400, 'Error! Bad request');
     }
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/:userId').put((req, res, next) => {
+router.route('/:userId').put(async (req, res, next) => {
   try {
-    const user = usersService.getUserById(req.params.userId);
-    if (!user) {
-      res.status(404);
-      res.send({ message: 'Error! The board is not found' });
-    } else {
-      usersService.updateUser(req.params.userId, req.body);
-      res.status(200);
-      res.send({ message: 'Success! The user has been updated.' });
-    }
+    await usersService.updateUser(req.params.userID, req.body);
+    res.status(200);
+    res.send({ message: 'The user has been updated.' });
   } catch (err) {
     return next(err);
   }
 });
 
-router.route('/:userId').delete((req, res, next) => {
+router.route('/:userId').delete(async (req, res, next) => {
   try {
-    usersService.deleteUser(req.params.userId);
+    await usersService.deleteUser(req.params.userID);
     res.status(204);
-    res.send({ message: 'Success! The user has been deleted.' });
+    res.send({ message: 'The user has been deleted' });
   } catch (err) {
     return next(err);
   }
