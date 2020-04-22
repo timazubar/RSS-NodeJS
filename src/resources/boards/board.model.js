@@ -1,5 +1,5 @@
-const uuid = require('uuid');
 const mongoose = require('mongoose');
+const uuid = require('uuid');
 
 const boardSchema = new mongoose.Schema({
   title: {

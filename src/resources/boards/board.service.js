@@ -1,34 +1,34 @@
-const boardsRepo = require('./board.db.repository');
-const tasksRepo = require('../tasks/task.db.repository');
+const boardRepo = require('./board.db.repository');
+const taskRepo = require('../tasks/task.db.repository');
 
-const getAll = async () => await boardsRepo.getAll();
+const getAll = async () => await boardRepo.getAll();
 
-const getBoardById = async id => {
-  return await boardsRepo.getBoardById(id);
+const getByID = async id => {
+  return await boardRepo.getByID(id);
 };
 
-const createBoard = async board => {
-  await boardsRepo.createBoard(board);
+const addBoard = async board => {
+  await boardRepo.addBoard(board);
 };
 
-const updateBoard = async (id, newParams) => {
-  await boardsRepo.updateBoard(id, newParams);
+const updateBoard = async (id, data) => {
+  await boardRepo.updateBoard(id, data);
 };
 
 const deleteBoard = async id => {
-  await boardsRepo.deleteBoard(id);
-  const tasks = (await tasksRepo.getAll()).filter(task => task.boardId === id);
+  await boardRepo.deleteBoard(id);
+  const tasks = (await taskRepo.getAll()).filter(task => task.boardId === id);
 
   tasks.forEach(async task => {
     const { id: taskId, boardId } = task;
-    await tasksRepo.deleteTask(taskId, boardId);
+    await taskRepo.deleteTask(taskId, boardId);
   });
 };
 
 module.exports = {
   getAll,
-  getBoardById,
-  createBoard,
+  getByID,
+  addBoard,
   updateBoard,
   deleteBoard
 };

@@ -1,32 +1,29 @@
-// const boards = [];
+const boards = [];
 
-// const getAll = () => {
-//   return boards;
-// };
+const getAll = () => {
+  return boards;
+};
 
-// const createBoard = board => {
-//   boards.push(board);
-// };
+const getByID = id => {
+  return boards.find(board => board.id === id);
+};
 
-// const updateBoard = (id, newParams) => {
-//   const index = boards.map(board => board.id).indexOf(id);
+const addBoard = board => {
+  boards.push(board);
+};
 
-//   if (index !== -1) {
-//     boards[index] = { ...boards[index], ...newParams };
-//   }
-// };
+const updateBoard = (id, data) => {
+  const boardIdx = boards.map(board => board.id).indexOf(id);
+  if (boardIdx > -1) {
+    boards[boardIdx] = { ...boards[boardIdx], ...data };
+  }
+};
 
-// const deleteBoard = id => {
-//   const index = boards.map(board => board.id).indexOf(id);
+const deleteBoard = id => {
+  const boardIdx = boards.map(board => board.id).indexOf(id);
+  if (boardIdx > -1) {
+    boards.splice(boardIdx, 1);
+  }
+};
 
-//   if (index !== -1) {
-//     boards.splice(index, 1);
-//   }
-// };
-
-// module.exports = {
-//   getAll,
-//   createBoard,
-//   updateBoard,
-//   deleteBoard
-// };
+module.exports = { getAll, getByID, addBoard, updateBoard, deleteBoard };

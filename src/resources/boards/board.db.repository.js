@@ -4,11 +4,11 @@ const getAll = async () => {
   return await Board.find({});
 };
 
-const getBoardById = async id => {
+const getByID = async id => {
   return await Board.findOne({ id });
 };
 
-const createBoard = async board => {
+const addBoard = async board => {
   await Board.create(board);
 };
 
@@ -20,10 +20,4 @@ const deleteBoard = async id => {
   await Board.deleteOne({ id });
 };
 
-module.exports = {
-  getAll,
-  getBoardById,
-  createBoard,
-  updateBoard,
-  deleteBoard
-};
+module.exports = { getAll, getByID, addBoard, updateBoard, deleteBoard };

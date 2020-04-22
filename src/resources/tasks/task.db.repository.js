@@ -4,7 +4,7 @@ const getAll = async () => {
   return await Task.find({});
 };
 
-const createTask = async task => {
+const addTask = async task => {
   await Task.create(task);
 };
 
@@ -16,4 +16,4 @@ const deleteTask = async (taskId, boardId) => {
   await Task.deleteOne({ id: taskId, boardId });
 };
 
-module.exports = { getAll, createTask, updateTask, deleteTask };
+module.exports = { getAll, addTask, updateTask, deleteTask };

@@ -4,7 +4,7 @@ const getAll = async () => {
   return await User.find({});
 };
 
-const createUser = async user => {
+const addUser = async user => {
   return await User.create(user);
 };
 
@@ -16,4 +16,4 @@ const deleteUser = async id => {
   await User.deleteOne({ id });
 };
 
-module.exports = { getAll, createUser, updateUser, deleteUser };
+module.exports = { getAll, addUser, updateUser, deleteUser };

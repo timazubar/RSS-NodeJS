@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const connectDB = cb => {
+const connectToDB = callback => {
   mongoose.connect(process.env.MONGO_CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -10,9 +10,9 @@ const connectDB = cb => {
   db.on('error', console.error.bind(console, 'connection error:'));
   db.once('open', async () => {
     await db.dropDatabase();
-    console.log('DB is connected!');
-    cb();
+    console.log('Database connected!');
+    callback();
   });
 };
 
-module.exports = connectDB;
+module.exports = connectToDB;
